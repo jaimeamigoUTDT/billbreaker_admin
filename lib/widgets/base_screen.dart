@@ -6,7 +6,7 @@ class BaseScreen extends StatefulWidget {
   final String title;
   final Widget body;
 
-  const BaseScreen({Key? key, required this.title, required this.body}) : super(key: key);
+  const BaseScreen({super.key, required this.title, required this.body});
 
   @override
   _BaseScreenState createState() => _BaseScreenState();

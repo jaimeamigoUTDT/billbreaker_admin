@@ -1,8 +1,13 @@
+import 'package:billbreaker_admin/app/pages/login/login_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:get/state_manager.dart';
 import 'package:go_router/go_router.dart';
 
-class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+class LoginPage extends GetView<LoginController> {
+  LoginPage({super.key});
+
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +38,8 @@ class LoginPage extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               // Campo de correo
-              const TextField(
+              TextField(
+                controller: _emailController,
                 decoration: InputDecoration(
                   labelText: 'Correo electrónico',
                   border: OutlineInputBorder(),
@@ -42,7 +48,8 @@ class LoginPage extends StatelessWidget {
               ),
               const SizedBox(height: 15),
               // Campo de contraseña
-              const TextField(
+              TextField(
+                controller: _passwordController,
                 obscureText: true,
                 decoration: InputDecoration(
                   labelText: 'Contraseña',
@@ -53,7 +60,9 @@ class LoginPage extends StatelessWidget {
               const SizedBox(height: 20),
               // Botón de Login
               ElevatedButton(
-                onPressed: () => context.go('/home'),
+                onPressed: () => {
+                  context.go('/login'),
+                },
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   shape: RoundedRectangleBorder(
@@ -65,7 +74,9 @@ class LoginPage extends StatelessWidget {
               const SizedBox(height: 10),
               // Enlace de "Registrarse"
               TextButton(
-                onPressed: () {}, // Aquí puedes agregar la navegación a una pantalla de registro
+                onPressed: () => {
+                  context.go('/register'),
+                }, // Aquí puedes agregar la navegación a una pantalla de registro
                 child: const Text(
                   'Registrarse',
                   style: TextStyle(color: Colors.blue, fontSize: 14),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../widgets/base_screen.dart';
+import '../../widgets/base_screen.dart';
 
 class IntegracionesPage extends StatefulWidget {
   const IntegracionesPage({Key? key}) : super(key: key);

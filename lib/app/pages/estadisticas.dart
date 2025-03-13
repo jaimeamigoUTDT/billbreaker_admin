@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../widgets/base_screen.dart';
+import '../../widgets/base_screen.dart';
 
 class EstadisticasPage extends StatelessWidget {
   const EstadisticasPage({super.key});
