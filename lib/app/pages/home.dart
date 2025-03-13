@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../widgets/base_screen.dart';
 
 class HomePage extends StatelessWidget {
@@ -39,18 +40,23 @@ class HomePage extends StatelessWidget {
                         ),
                         itemCount: mesas.length,
                         itemBuilder: (context, index) {
-                          return Container(
-                            decoration: BoxDecoration(
-                              color: Colors.orange, // Color de las mesas
-                              borderRadius: BorderRadius.circular(50),
-                            ),
-                            child: Center(
-                              child: Text(
-                                mesas[index],
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 40,
+                          return GestureDetector(
+                            onTap: () {
+                              context.go('/mesa/${mesas[index]}'); // ✅ Navegar a la mesa con GoRouter
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.orange, // Color de las mesas
+                                borderRadius: BorderRadius.circular(50),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  mesas[index],
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 40,
+                                  ),
                                 ),
                               ),
                             ),
