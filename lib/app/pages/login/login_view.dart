@@ -2,12 +2,23 @@ import 'package:billbreaker_admin/app/pages/login/login_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/state_manager.dart';
 import 'package:go_router/go_router.dart';
+import '../../authentication/auth_service.dart';
 
 class LoginPage extends GetView<LoginController> {
   LoginPage({super.key});
 
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
+  void _login(BuildContext context) async {
+
+    await AuthService().login(_emailController.text, _passwordController.text);
+    if (AuthService().isAuthenticated) {
+      if (context.mounted){
+        GoRouter.of(context).go('/home');
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +72,7 @@ class LoginPage extends GetView<LoginController> {
               // Botón de Login
               ElevatedButton(
                 onPressed: () => {
-                  context.go('/login'),
+                  _login(context)
                 },
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 12),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../widgets/base_screen.dart';
+import '../../../widgets/base_screen.dart';
 
 class AjustesPage extends StatelessWidget {
   const AjustesPage({super.key});
