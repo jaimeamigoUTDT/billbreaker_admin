@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/state_manager.dart';
 import 'package:go_router/go_router.dart';
 import '../../authentication/auth_service.dart';
+import 'package:billbreaker_admin/app/app.dart' as app;
 
 class LoginPage extends GetView<LoginController> {
   LoginPage({super.key});
@@ -13,7 +14,8 @@ class LoginPage extends GetView<LoginController> {
   void _login(BuildContext context) async {
 
     await AuthService().login(_emailController.text, _passwordController.text);
-    if (AuthService().isAuthenticated) {
+    if (app.isAuthenticated) {
+      
       if (context.mounted){
         GoRouter.of(context).go('/home');
       }
@@ -73,6 +75,7 @@ class LoginPage extends GetView<LoginController> {
               ElevatedButton(
                 onPressed: () => {
                   _login(context)
+                  
                 },
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 12),
