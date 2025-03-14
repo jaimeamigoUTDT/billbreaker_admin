@@ -62,9 +62,9 @@ class HistorialPage extends GetView<HistorialPageController> {
                             ],
                             rows: histController.historial.map((item) {
                               return DataRow(cells: [
-                                DataCell(Text(item["accion"] ?? 'N/A')),
+                                DataCell(Text(item["created_at"] ?? 'N/A')),
                                 DataCell(Text(item["estado"] ?? 'N/A')),
-                                DataCell(Text(item["numero_mesa"] ?? 'N/A')),
+                                DataCell(Text(item["numero_mesa"].toString())),
                                 
                               ]);
                             }).toList(),

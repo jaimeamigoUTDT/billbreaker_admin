@@ -1,6 +1,7 @@
+import 'dart:convert';
+
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:billbreaker_admin/app/app.dart' as app;
 
 class HistorialPageController extends GetxController {
@@ -12,8 +13,7 @@ class HistorialPageController extends GetxController {
     fetchHistorial(); // Fetch data on initialization
   }
 
-  Future<void> fetchHistorial() async {
-    try {
+  void fetchHistorial() async {
       // Define the API endpoint
       const String apiUrl = 'https://api.billbreaker.com.ar/database/history';
 
@@ -25,34 +25,19 @@ class HistorialPageController extends GetxController {
       };
 
       // Make the GET request
-      final response = await http.get(
+      var response = await http.get(
         Uri.parse(apiUrl),
         headers: headers,
       );
+      
+      print(response.body); 
 
-      // Check if the request was successful
-      if (response.statusCode == 200) {
-        // Parse the JSON response
-        final List<dynamic> rawData = jsonDecode(response.body);
+      final rawHistorial = jsonDecode(response.body)['data'];
 
-        // Map the data to include only "fecha", "estado", and "numero de mesa"
-        final List<Map<String, dynamic>> filteredData = rawData.map((item) {
-          return {
-            'fecha': item['created_at']?.toString() ?? 'N/A',
-            'estado': item['estado']?.toString() ?? 'N/A',
-            'numero_mesa': item['numero_mesa']?.toString() ?? 'N/A',
-          };
-        }).toList();
+      // Update the historial list with the fetched data
+      historial.value = rawHistorial;
+      
 
-        // Update the observable list with the filtered data
-        historial.value = filteredData;
-      } else {
-        Get.snackbar('Error', 'Failed to fetch historial: ${response.statusCode}');
-        historial.value = []; // Clear list on error
       }
-    } catch (e) {
-      Get.snackbar('Error', 'Network error: $e');
-      historial.value = []; // Clear list on error
-    }
-  }
+
 }
