@@ -1,6 +1,5 @@
-import 'dart:convert'; // Required for jsonDecode
+import 'dart:convert'; 
 import 'package:http/http.dart' as http;
-
 import '../app.dart' as app;
 
 class AuthService {
@@ -8,11 +7,9 @@ class AuthService {
   factory AuthService() => _instance;
   AuthService._internal();
 
-  bool isAuthenticated = false;
-
   Future<void> login(String email, String password) async {
-
-    final Uri authenticationUrl = Uri.parse('https://api.billbreaker.com.ar/auth/login');
+    final Uri authenticationUrl =
+        Uri.parse('https://api.billbreaker.com.ar/auth/login');
 
     // Create the request body with email and password
     final Map<String, String> body = {
@@ -30,23 +27,57 @@ class AuthService {
 
       // Check if the request was successful
       if (response.statusCode == 200) {
-
         final Map<String, dynamic> queryContent = jsonDecode(response.body);
 
-        isAuthenticated = true;
-        app.restaurante_id = queryContent['restaurante_id'];
-
-      } else {
-
-        print('Login failed with status code: ${response.statusCode}');
-        isAuthenticated = false;
+        if (queryContent['apiKey'] != null && queryContent['status'] == 'OK') {
+        
+          app.supabaseToken = queryContent['apiKey'];
+          app.restaurantId = queryContent['restaurant_id'];
+          app.isAuthenticated = true;
+        } else {
+          app.isAuthenticated = false;
+        }
       }
     } catch (e) {
-
-      print('Error during login: $e');
-      isAuthenticated = false;
+      app.isAuthenticated = false;
     }
   }
 
-  void logout() => isAuthenticated = false;
+  Future<bool> register(String email, String password) async {
+    final Uri authenticationUrl =
+        Uri.parse('https://api.billbreaker.com.ar/auth/register');
+
+    // Create the request body with email and password
+    final Map<String, String> body = {
+      'email': email,
+      'password': password,
+    };
+
+    try {
+      // Send a POST request with JSON body
+      final http.Response response = await http.post(
+        authenticationUrl,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(body),
+      );
+
+      // Check if the request was successful
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> queryContent = jsonDecode(response.body);
+
+        if (queryContent['status'] == 'OK') {
+          
+          return true;
+
+        } else {
+          return false;
+        }
+      }
+    } catch (e) {
+      return false;
+    }
+    return false;
+  }
+
+  void logout() => app.isAuthenticated = false;
 }
