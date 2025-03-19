@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart'; // Add this package
 import '../../../widgets/base_screen.dart';
 
 class IntegracionesPage extends StatefulWidget {
-  const IntegracionesPage({Key? key}) : super(key: key);
+  final String restaurantId; // Add restaurantId as a required parameter
+
+  const IntegracionesPage({Key? key, required this.restaurantId}) : super(key: key);
 
   @override
   _IntegracionesPageState createState() => _IntegracionesPageState();
@@ -10,6 +13,14 @@ class IntegracionesPage extends StatefulWidget {
 
 class _IntegracionesPageState extends State<IntegracionesPage> {
   String? seleccionActual; // Almacena la integración seleccionada
+
+  // Function to launch URL
+  Future<void> _launchUrl(String url) async {
+    final Uri uri = Uri.parse(url);
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+      throw 'Could not launch $url';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -96,7 +107,7 @@ class _IntegracionesPageState extends State<IntegracionesPage> {
             ),
           ),
         ),
-        const SizedBox(width: 10), // Espaciado entre el campo y el botón
+        const SizedBox(width: 10),
         ElevatedButton(
           onPressed: () {
             print("Actualizando $labelText...");
@@ -106,43 +117,53 @@ class _IntegracionesPageState extends State<IntegracionesPage> {
       ],
     );
   }
-Widget _buildIntegrationCard(String? imagePath, String? nombre) {
-  return GestureDetector(
-    onTap: () {
-      if (nombre != null) {
-        setState(() {
-          seleccionActual = nombre;
-        });
-      }
-    },
-    child: Container(
-      width: 200,
-      height: 100,
-      decoration: BoxDecoration(
-        color: nombre == "Fudo" ? const Color(0xFFEF3A21) : Colors.white,
-        borderRadius: BorderRadius.circular(15),
-        border: Border.all(
-          color: seleccionActual == nombre ? Colors.orange : Colors.grey[400]!,
-          width: seleccionActual == nombre ? 2 : 1,
-        ),
-        boxShadow: [
-          const BoxShadow(
-            color: Colors.black26,
-            blurRadius: 4,
-            offset: Offset(2, 2),
+
+  Widget _buildIntegrationCard(String? imagePath, String? nombre) {
+    return GestureDetector(
+      onTap: () {
+        if (nombre == "Mercado Pago") {
+          // Redirect to Mercado Pago link
+          final url = "https://api.billbreaker.com.ar/auth/mp-link/${widget.restaurantId}";
+          _launchUrl(url).catchError((e) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("Error al abrir el enlace: $e")),
+            );
+          });
+        } else if (nombre != null) {
+          // For other integrations (e.g., Fudo), update seleccionActual
+          setState(() {
+            seleccionActual = nombre;
+          });
+        }
+      },
+      child: Container(
+        width: 200,
+        height: 100,
+        decoration: BoxDecoration(
+          color: nombre == "Fudo" ? const Color(0xFFEF3A21) : Colors.white,
+          borderRadius: BorderRadius.circular(15),
+          border: Border.all(
+            color: seleccionActual == nombre ? Colors.orange : Colors.grey[400]!,
+            width: seleccionActual == nombre ? 2 : 1,
           ),
-        ],
+          boxShadow: [
+            const BoxShadow(
+              color: Colors.black26,
+              blurRadius: 4,
+              offset: Offset(2, 2),
+            ),
+          ],
+        ),
+        child: imagePath != null
+            ? Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Image.asset(
+                  imagePath,
+                  fit: BoxFit.contain,
+                ),
+              )
+            : null,
       ),
-      child: imagePath != null
-          ? Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Image.asset(
-                imagePath,
-                fit: BoxFit.contain, // Eliminamos la manipulación del color
-              ),
-            )
-          : null,
-    ),
-  );
+    );
+  }
 }
-} 

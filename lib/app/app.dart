@@ -71,7 +71,7 @@ class BillbreakerAdminDashboard extends StatelessWidget {
     ),
     GoRoute(
       path: '/integraciones',
-      pageBuilder: (context, state) => NoTransitionPage(child: IntegracionesPage()),
+      pageBuilder: (context, state) => NoTransitionPage(child: IntegracionesPage(restaurantId: restaurantId,)),
       redirect: (context, state) async {
         if (!isAuthenticated) {
           return '/login';
