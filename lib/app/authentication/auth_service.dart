@@ -24,7 +24,6 @@ class AuthService {
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(body),
       );
-
       // Check if the request was successful
       if (response.statusCode == 200) {
         final Map<String, dynamic> queryContent = jsonDecode(response.body);
@@ -32,7 +31,7 @@ class AuthService {
         if (queryContent['apiKey'] != null && queryContent['status'] == 'OK') {
         
           app.supabaseToken = queryContent['apiKey'];
-          app.restaurantId = queryContent['restaurant_id'];
+          app.restaurantId = queryContent['restaurante_username'];
           app.isAuthenticated = true;
         } else {
           app.isAuthenticated = false;
