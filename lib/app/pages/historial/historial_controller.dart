@@ -36,7 +36,6 @@ class HistorialPageController extends GetxController {
 
       // Update the historial list with the fetched data
       historial.value = rawHistorial;
-      
 
       }
 

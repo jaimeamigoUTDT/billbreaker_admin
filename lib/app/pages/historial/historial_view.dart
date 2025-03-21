@@ -56,13 +56,11 @@ class HistorialPage extends GetView<HistorialPageController> {
                       ? SingleChildScrollView(
                           child: DataTable(
                             columns: const [
-                              DataColumn(label: Text('Fecha')),
                               DataColumn(label: Text('Estado')),
                               DataColumn(label: Text('Numero de mesa')),
                             ],
                             rows: histController.historial.map((item) {
                               return DataRow(cells: [
-                                DataCell(Text(item["created_at"] ?? 'N/A')),
                                 DataCell(Text(item["estado"] ?? 'N/A')),
                                 DataCell(Text(item["numero_mesa"].toString())),
                                 
