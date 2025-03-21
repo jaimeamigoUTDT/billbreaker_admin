@@ -12,13 +12,52 @@ class LoginPage extends GetView<LoginController> {
   final TextEditingController _passwordController = TextEditingController();
 
   void _login(BuildContext context) async {
+    // Check if email is empty
+    if (_emailController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Por favor, ingresa tu correo electrónico'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
 
-    await AuthService().login(_emailController.text, _passwordController.text);
-    if (app.isAuthenticated) {
-      
-      if (context.mounted){
+    // Check if password is empty
+    if (_passwordController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Por favor, ingresa tu contraseña'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    try {
+      // Attempt to login
+      await AuthService().login(_emailController.text, _passwordController.text);
+
+      // Check if authenticated and navigate
+      if (app.isAuthenticated && context.mounted) {
         GoRouter.of(context).go('/home');
       }
+    } catch (e) {
+      // Handle login errors
+      String errorMessage;
+
+      if (e.toString().contains('Invalid login credentials')) { // Adjust based on AuthService error format
+        errorMessage = 'Correo o contraseña incorrectos';
+      } else {
+        errorMessage = 'Error al iniciar sesión: ${e.toString()}';
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(errorMessage),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 
@@ -53,7 +92,7 @@ class LoginPage extends GetView<LoginController> {
               // Campo de correo
               TextField(
                 controller: _emailController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Correo electrónico',
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.email),
@@ -64,7 +103,7 @@ class LoginPage extends GetView<LoginController> {
               TextField(
                 controller: _passwordController,
                 obscureText: true,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Contraseña',
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.lock),
@@ -73,10 +112,7 @@ class LoginPage extends GetView<LoginController> {
               const SizedBox(height: 20),
               // Botón de Login
               ElevatedButton(
-                onPressed: () => {
-                  _login(context)
-                  
-                },
+                onPressed: () => _login(context),
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   shape: RoundedRectangleBorder(
@@ -88,9 +124,7 @@ class LoginPage extends GetView<LoginController> {
               const SizedBox(height: 10),
               // Enlace de "Registrarse"
               TextButton(
-                onPressed: () => {
-                  context.go('/register'),
-                }, // Aquí puedes agregar la navegación a una pantalla de registro
+                onPressed: () => context.go('/register'),
                 child: const Text(
                   'Registrarse',
                   style: TextStyle(color: Colors.blue, fontSize: 14),

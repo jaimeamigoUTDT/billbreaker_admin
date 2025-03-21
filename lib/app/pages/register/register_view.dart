@@ -9,20 +9,49 @@ class RegisterPage extends GetView<RegisterController> {
 
   final TextEditingController _emailRegisterController = TextEditingController();
   final TextEditingController _passwordRegisterController = TextEditingController();
+  final TextEditingController _emailVerifyController = TextEditingController();
+  final TextEditingController _passwordVerifyController = TextEditingController();
+  final TextEditingController _userNameController = TextEditingController();
 
   void _register(BuildContext context) async {
+    // Check if emails match
+    if (_emailRegisterController.text != _emailVerifyController.text) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Los correos electrónicos no coinciden'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return; // Exit the method if emails don't match
+    }
 
-    await AuthService().register(_emailRegisterController.text, _passwordRegisterController.text);
+    // Check if passwords match
+    if (_passwordRegisterController.text != _passwordVerifyController.text) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Las contraseñas no coinciden'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return; // Exit the method if passwords don't match
+    }
 
-      if (context.mounted){
-        GoRouter.of(context).go('/login');
-      }
+    // Proceed with registration if validation passes
+    await AuthService().register(
+      _userNameController.text,
+      _emailRegisterController.text,
+      _emailVerifyController.text,
+      _passwordRegisterController.text,
+      _passwordVerifyController.text,
+    );
+
+    if (context.mounted) {
+      GoRouter.of(context).go('/login');
+    }
   }
-
 
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
       appBar: AppBar(),
       body: Center(
@@ -45,16 +74,36 @@ class RegisterPage extends GetView<RegisterController> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const Text(
-                'Iniciar Sesión',
+                'Registrarse',
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 20),
+              // Campo de usuario
+              TextField(
+                controller: _userNameController,
+                decoration: const InputDecoration(
+                  labelText: 'Nombre de usuario',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.person), // Changed to a more appropriate icon
+                ),
               ),
               const SizedBox(height: 20),
               // Campo de correo
               TextField(
                 controller: _emailRegisterController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Correo electrónico',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.email),
+                ),
+              ),
+              const SizedBox(height: 15),
+              // Campo de verificar correo
+              TextField(
+                controller: _emailVerifyController,
+                decoration: const InputDecoration(
+                  labelText: 'Verificar correo electrónico',
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.email),
                 ),
@@ -64,18 +113,27 @@ class RegisterPage extends GetView<RegisterController> {
               TextField(
                 controller: _passwordRegisterController,
                 obscureText: true,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Contraseña',
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.lock),
                 ),
               ),
-              const SizedBox(height: 20),
-              // Botón de Login
+              const SizedBox(height: 15),
+              // Campo de verificar contraseña
+              TextField(
+                controller: _passwordVerifyController,
+                obscureText: true,
+                decoration: const InputDecoration(
+                  labelText: 'Verificar contraseña',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.lock),
+                ),
+              ),
+              const SizedBox(height: 15),
+              // Botón de Registro
               ElevatedButton(
-                onPressed: () => {
-                  _register(context)
-                },
+                onPressed: () => _register(context),
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   shape: RoundedRectangleBorder(
@@ -84,11 +142,10 @@ class RegisterPage extends GetView<RegisterController> {
                 ),
                 child: const Text('Registrarse', style: TextStyle(fontSize: 16)),
               ),
-              ],
+            ],
           ),
         ),
       ),
     );
   }
-
 }

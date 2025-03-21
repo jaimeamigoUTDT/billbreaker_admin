@@ -1,9 +1,12 @@
+import 'package:billbreaker_admin/app/pages/historial/historial_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import '../../../widgets/base_screen.dart';
 
 class HomePage extends StatelessWidget {
-   HomePage({super.key});
+   
+  HomePage({super.key});
 
   // Lista de mesas disponibles
   final List<String> mesas = [
