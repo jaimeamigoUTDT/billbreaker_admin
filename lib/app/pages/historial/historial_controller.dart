@@ -30,8 +30,6 @@ class HistorialPageController extends GetxController {
         headers: headers,
       );
       
-      print(response.body); 
-
       final rawHistorial = jsonDecode(response.body)['data'];
 
       // Update the historial list with the fetched data

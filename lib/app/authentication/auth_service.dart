@@ -7,7 +7,7 @@ class AuthService {
   factory AuthService() => _instance;
   AuthService._internal();
 
-  Future<void> login(String email, String password) async {
+ Future<void> login(String email, String password) async {
     final Uri authenticationUrl =
         Uri.parse('https://api.billbreaker.com.ar/auth/login');
 
@@ -24,30 +24,36 @@ class AuthService {
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(body),
       );
+
       // Check if the request was successful
       if (response.statusCode == 200) {
         final Map<String, dynamic> queryContent = jsonDecode(response.body);
 
         if (queryContent['apiKey'] != null && queryContent['status'] == 'OK') {
-        
           app.supabaseToken = queryContent['apiKey'];
           app.restaurantId = queryContent['restaurante_username'];
           app.isAuthenticated = true;
         } else {
-          app.isAuthenticated = false;
+          throw Exception('Credenciales inválidas o respuesta inesperada del servidor');
         }
+      } else if (response.statusCode == 401) {
+        throw Exception('Correo o contraseña incorrectos'); // Unauthorized
+      } else {
+        throw Exception('Error del servidor: ${response.statusCode}');
       }
     } catch (e) {
       app.isAuthenticated = false;
+      throw Exception('Error al iniciar sesión: ${e.toString()}'); // Re-throw for caller
     }
   }
 
-  Future<bool> register(String email, String password) async {
+  Future<bool> register(String username, String email, String emailVerification, String password, String passwordVerification) async {
     final Uri authenticationUrl =
         Uri.parse('https://api.billbreaker.com.ar/auth/register');
 
     // Create the request body with email and password
     final Map<String, String> body = {
+      'username': username,
       'email': email,
       'password': password,
     };
