@@ -47,7 +47,7 @@ class _BaseScreenState extends State<BaseScreen> {
                 const SizedBox(height: 25),
                 _buildNavItem(context, Icons.bar_chart, 'Estadísticas', '/estadisticas', currentRoute),
                 const SizedBox(height: 25),
-                _buildNavItem(context, Icons.settings, 'Ajustes', '/ajustes', currentRoute),
+                _buildNavItem(context, Icons.settings, 'Integraciones', '/integraciones', currentRoute),
                 const SizedBox(height: 20),
               ],
             ),

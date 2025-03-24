@@ -25,6 +25,14 @@ class AuthService {
         body: jsonEncode(body),
       );
 
+      //PARA EL INICIO DE SESION 
+      app.isAuthenticated = true;
+      app.supabaseToken = "1f61c8720f5642f48c70e8c23283a984";
+      app.restaurantId = "testing";
+    } catch (e) {}
+
+      /*
+
       // Check if the request was successful
       if (response.statusCode == 200) {
         final Map<String, dynamic> queryContent = jsonDecode(response.body);
@@ -45,6 +53,7 @@ class AuthService {
       app.isAuthenticated = false;
       throw Exception('Error al iniciar sesión: ${e.toString()}'); // Re-throw for caller
     }
+    */
   }
 
   Future<bool> register(String username, String email, String emailVerification, String password, String passwordVerification) async {

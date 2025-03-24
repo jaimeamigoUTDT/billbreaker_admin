@@ -1,4 +1,3 @@
-import 'package:billbreaker_admin/app/pages/ajustes/ajustes.dart';
 import 'package:billbreaker_admin/app/pages/estadisticas/estadisticas.dart';
 import 'package:billbreaker_admin/app/pages/historial/historial_view.dart';
 import 'package:billbreaker_admin/app/pages/integraciones/integraciones.dart';
@@ -59,16 +58,7 @@ class BillbreakerAdminDashboard extends StatelessWidget {
         return null;
       },
     ),
-    GoRoute(
-      path: '/ajustes',
-      pageBuilder: (context, state) => NoTransitionPage(child: AjustesPage()),
-      redirect: (context, state) async {
-        if (!isAuthenticated) {
-          return '/login';
-        }
-        return null;
-      },
-    ),
+   
     GoRoute(
       path: '/integraciones',
       pageBuilder: (context, state) => NoTransitionPage(child: IntegracionesPage(restaurantId: restaurantId,)),
