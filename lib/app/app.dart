@@ -9,18 +9,16 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 late String restaurantId;
-
-late String supabaseToken;
-
+late String apiKey;
 bool isAuthenticated = false;
 
 class BillbreakerAdminDashboard extends StatelessWidget {
   const BillbreakerAdminDashboard({super.key});
 
   static GoRoute _route(String path, Widget page) => GoRoute(
-    path: path,
-    pageBuilder: (context, state) => NoTransitionPage(child: page),
-  );
+        path: path,
+        pageBuilder: (context, state) => NoTransitionPage(child: page),
+      );
 
   static final _publicRoutes = [
     _route('/login', LoginPage()),
@@ -32,7 +30,7 @@ class BillbreakerAdminDashboard extends StatelessWidget {
       path: '/home',
       pageBuilder: (context, state) => NoTransitionPage(child: HomePage()),
       redirect: (context, state) async {
-        if (!isAuthenticated) {
+        if (!isAuthenticated || restaurantId.isEmpty || apiKey.isEmpty) {
           return '/login';
         }
         return null;
@@ -42,7 +40,7 @@ class BillbreakerAdminDashboard extends StatelessWidget {
       path: '/historial',
       pageBuilder: (context, state) => NoTransitionPage(child: HistorialPage()),
       redirect: (context, state) async {
-        if (!isAuthenticated) {
+        if (!isAuthenticated || restaurantId.isEmpty || apiKey.isEmpty) {
           return '/login';
         }
         return null;
@@ -52,18 +50,19 @@ class BillbreakerAdminDashboard extends StatelessWidget {
       path: '/estadisticas',
       pageBuilder: (context, state) => NoTransitionPage(child: EstadisticasPage()),
       redirect: (context, state) async {
-        if (!isAuthenticated) {
+        if (!isAuthenticated || restaurantId.isEmpty || apiKey.isEmpty) {
           return '/login';
         }
         return null;
       },
     ),
-   
     GoRoute(
       path: '/integraciones',
-      pageBuilder: (context, state) => NoTransitionPage(child: IntegracionesPage(restaurantId: restaurantId,)),
+      pageBuilder: (context, state) => NoTransitionPage(
+        child: IntegracionesPage(restaurantId: restaurantId),
+      ),
       redirect: (context, state) async {
-        if (!isAuthenticated) {
+        if (!isAuthenticated || restaurantId.isEmpty || apiKey.isEmpty) {
           return '/login';
         }
         return null;
@@ -76,7 +75,7 @@ class BillbreakerAdminDashboard extends StatelessWidget {
         return MesaPage(restaurantId: restaurantId, tableNumber: pageNumber);
       },
       redirect: (context, state) async {
-        if (!isAuthenticated) {
+        if (!isAuthenticated || restaurantId.isEmpty || apiKey.isEmpty) {
           return '/login';
         }
         return null;
@@ -85,7 +84,9 @@ class BillbreakerAdminDashboard extends StatelessWidget {
   ];
 
   static final _router = GoRouter(
-    initialLocation: '/login',
+    initialLocation: isAuthenticated && restaurantId.isNotEmpty && apiKey.isNotEmpty
+        ? '/home'
+        : '/login',
     routes: [
       ..._publicRoutes,
       ..._protectedRoutes,

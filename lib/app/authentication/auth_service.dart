@@ -1,5 +1,6 @@
 import 'dart:convert'; 
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import '../app.dart' as app;
 
 class AuthService {
@@ -25,22 +26,20 @@ class AuthService {
         body: jsonEncode(body),
       );
 
-      //PARA EL INICIO DE SESION 
-      app.isAuthenticated = true;
-      app.supabaseToken = "1f61c8720f5642f48c70e8c23283a984";
-      app.restaurantId = "testing";
-    } catch (e) {}
-
-      /*
-
       // Check if the request was successful
       if (response.statusCode == 200) {
         final Map<String, dynamic> queryContent = jsonDecode(response.body);
 
         if (queryContent['apiKey'] != null && queryContent['status'] == 'OK') {
-          app.supabaseToken = queryContent['apiKey'];
+          app.apiKey = queryContent['apiKey'];
           app.restaurantId = queryContent['restaurante_username'];
           app.isAuthenticated = true;
+
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setBool('isAuthenticated', true);
+          await prefs.setString('apiKey', app.apiKey);
+          await prefs.setString('restaurantId', app.restaurantId);
+
         } else {
           throw Exception('Credenciales inválidas o respuesta inesperada del servidor');
         }
@@ -53,7 +52,6 @@ class AuthService {
       app.isAuthenticated = false;
       throw Exception('Error al iniciar sesión: ${e.toString()}'); // Re-throw for caller
     }
-    */
   }
 
   Future<bool> register(String username, String email, String emailVerification, String password, String passwordVerification) async {
@@ -93,5 +91,13 @@ class AuthService {
     return false;
   }
 
-  void logout() => app.isAuthenticated = false;
+  void logout() async {
+    app.isAuthenticated = false;
+    app.apiKey = '';
+    app.restaurantId = '';
+
+    // Clear SharedPreferences
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+  }
 }

@@ -19,7 +19,7 @@ class HistorialPageController extends GetxController {
 
       // Set up headers with apiKey and restaurantId
       final Map<String, String> headers = {
-        'X-API-Key': app.supabaseToken,
+        'X-API-Key': app.apiKey,
         'X-Restaurant-ID': app.restaurantId,
         'Content-Type': 'application/json',
       };
