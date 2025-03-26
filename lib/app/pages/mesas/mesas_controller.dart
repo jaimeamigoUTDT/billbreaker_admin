@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'dart:html' as html show AnchorElement;
+import 'package:universal_html/html.dart' as html; // Use universal_html instead
 
 class MesaPageController extends GetxController {
   late String qrUrl;

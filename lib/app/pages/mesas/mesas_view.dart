@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../widgets/base_screen.dart';
+import '../../../widgets/base_screen/base_screen.dart';
 import 'mesas_controller.dart'; // Single import is enough
 
 class MesaPage extends GetView<MesaPageController> {

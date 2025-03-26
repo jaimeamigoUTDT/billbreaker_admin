@@ -1,17 +1,11 @@
-import 'package:billbreaker_admin/app/pages/historial/historial_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
-import '../../../widgets/base_screen.dart';
+import '../../../widgets/base_screen/base_screen.dart';
+import 'home_controller.dart';
 
-class HomePage extends StatelessWidget {
-   
-  HomePage({super.key});
-
-  // Lista de mesas disponibles
-  final List<String> mesas = [
-    "1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
-  ];
+class HomePage extends GetView<HomeController> {
+  const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -34,44 +28,63 @@ class HomePage extends StatelessWidget {
                   color: Colors.grey[300],
                   borderRadius: BorderRadius.circular(15),
                 ),
-                child: mesas.isNotEmpty
-                    ? GridView.builder(
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 4, // 4 columnas
+                child: Obx(
+                  () {
+                    if (controller.isLoading.value) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (controller.mesas.isNotEmpty) {
+                      return GridView.builder(
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 6,
                           crossAxisSpacing: 40,
                           mainAxisSpacing: 40,
                         ),
-                        itemCount: mesas.length,
+                        itemCount: controller.mesas.length,
                         itemBuilder: (context, index) {
-                          return GestureDetector(
-                            onTap: () {
-                              context.go('/mesa/${mesas[index]}'); // ✅ Navegar a la mesa con GoRouter
+                          final table = controller.mesas[index];
+                          return ElevatedButton(
+                            onPressed: () {
+                              context.go(
+                                  '/mesa/${table.id}'); // Navigate using table.id
                             },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.orange, // Color de las mesas
-                                borderRadius: BorderRadius.circular(50),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  mesas[index],
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 40,
-                                  ),
-                                ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: table.active
+                                  ? Colors.green
+                                  : Colors
+                                      .red, // Button color based on active status
+                              foregroundColor: Colors.white, // Text/icon color
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30.0),
+                              ), // Squared shape
+                              padding: const EdgeInsets.all(10), // Adjust size
+                              elevation: 4, // Slight elevation for depth
+                              // Customize hover and press animations
+                              animationDuration:
+                                  const Duration(milliseconds: 200),
+                            ),
+                            child: Text(
+                              table.number.toString(), // Display table number
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 30,
                               ),
                             ),
                           );
                         },
-                      )
-                    : const Center(
+                      );
+                    } else {
+                      return const Center(
                         child: Text(
                           "No hay ninguna mesa disponible",
-                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
                         ),
-                      ),
+                      );
+                    }
+                  },
+                ),
               ),
             ),
           ],

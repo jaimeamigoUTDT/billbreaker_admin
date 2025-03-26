@@ -1,3 +1,4 @@
+import 'package:billbreaker_admin/app/pages/home/home_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'app/app.dart';
@@ -21,6 +22,7 @@ void main() async {
 
   // Initialize AuthService
   Get.put(MesaPageController());
+  Get.put(HomeController());
   usePathUrlStrategy();
   runApp(BillbreakerAdminDashboard());
 }

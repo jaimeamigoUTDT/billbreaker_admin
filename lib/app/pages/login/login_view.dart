@@ -1,15 +1,17 @@
 import 'package:billbreaker_admin/app/pages/login/login_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:get/state_manager.dart';
+import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import '../../authentication/auth_service.dart';
 import 'package:billbreaker_admin/app/app.dart' as app;
+import 'package:billbreaker_admin/app/pages/home/home_controller.dart';
 
 class LoginPage extends GetView<LoginController> {
   LoginPage({super.key});
 
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final HomeController homeController = Get.find<HomeController>(); 
 
   void _login(BuildContext context) async {
     // Check if email is empty
@@ -41,6 +43,7 @@ class LoginPage extends GetView<LoginController> {
       // Check if authenticated and navigate
       if (app.isAuthenticated && context.mounted) {
         GoRouter.of(context).go('/home');
+        homeController.getMesas();
       }
     } catch (e) {
       // Handle login errors
@@ -63,6 +66,7 @@ class LoginPage extends GetView<LoginController> {
 
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
       body: Center(
         child: Container(
