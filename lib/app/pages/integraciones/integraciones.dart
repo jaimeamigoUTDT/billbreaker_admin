@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart'; // Add this package
-import '../../../widgets/base_screen.dart';
+import '../../../widgets/base_screen/base_screen.dart';
 
 class IntegracionesPage extends StatefulWidget {
   final String restaurantId; // Add restaurantId as a required parameter

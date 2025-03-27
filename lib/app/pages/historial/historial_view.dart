@@ -2,7 +2,7 @@ import 'package:billbreaker_admin/app/pages/historial/historial_controller.dart'
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:adaptive_scrollbar/adaptive_scrollbar.dart';
-import '../../../widgets/base_screen.dart';
+import '../../../widgets/base_screen/base_screen.dart';
 
 class HistorialPage extends GetView<HistorialPageController> {
   const HistorialPage({super.key});

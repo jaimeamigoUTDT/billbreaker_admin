@@ -47,6 +47,8 @@ dependencies:
   web: ^1.1.1
   url_launcher: ^6.3.1
   adaptive_scrollbar: ^2.1.2
+  shared_preferences: ^2.5.2
+  universal_html: ^2.2.4
 
 dev_dependencies:
   flutter_test:
@@ -75,6 +77,7 @@ flutter:
     - assets/logo.svg
     - assets/mercado_pago.jpg
     - assets/fudo.webp
+    - assets/account.svg
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 
