@@ -22,9 +22,21 @@ class HomeController extends GetxController {
   Future<void> getMesas() async {
     try {
       isLoading.value = true;
-      final response = await http.get(
-        Uri.parse('https://api.billbreaker.com.ar/foodserver/mesas/${app.restaurantId}'),
+
+      const String apiUrl = 'https://api.billbreaker.com.ar/foodserver/mesas';
+
+      final Map<String, String> headers = {
+        'X-API-Key': app.apiKey,
+        'X-Restaurant-ID': app.restaurantId,
+        'Content-Type': 'application/json',
+      };
+
+      // Make the GET request
+      var response = await http.get(
+        Uri.parse(apiUrl),
+        headers: headers,
       );
+
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
         mesas.value = data.map((json) => TableModel.fromJson(json)).toList();
@@ -38,4 +50,7 @@ class HomeController extends GetxController {
       isLoading.value = false;
     }
   }
+
+
+
 }
