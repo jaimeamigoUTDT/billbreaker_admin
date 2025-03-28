@@ -41,7 +41,7 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   void _register(BuildContext context) async {
-    _trimControllers(); // 🔥 Limpiar todos los campos
+    _trimControllers();
 
     setState(() {
       _usernameError = null;
@@ -131,15 +131,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   errorMaxLines: 2,
                 ),
                 onChanged: (value) {
-                  final trimmed = value.trim();
-                  if (_userNameController.text != trimmed) {
-                    _userNameController.value = TextEditingValue(
-                      text: trimmed,
-                      selection: TextSelection.collapsed(offset: trimmed.length),
-                    );
-                  }
-
-                  if (trimmed.contains('_')) {
+                  if (value.contains('_')) {
                     setState(() => _usernameError =
                         'No se permiten guiones bajos en el nombre de usuario.');
                   } else {
@@ -155,15 +147,6 @@ class _RegisterPageState extends State<RegisterPage> {
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.email),
                 ),
-                onChanged: (value) {
-                  final trimmed = value.trim();
-                  if (_emailRegisterController.text != trimmed) {
-                    _emailRegisterController.value = TextEditingValue(
-                      text: trimmed,
-                      selection: TextSelection.collapsed(offset: trimmed.length),
-                    );
-                  }
-                },
               ),
               const SizedBox(height: 15),
               TextField(
@@ -173,15 +156,6 @@ class _RegisterPageState extends State<RegisterPage> {
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.email),
                 ),
-                onChanged: (value) {
-                  final trimmed = value.trim();
-                  if (_emailVerifyController.text != trimmed) {
-                    _emailVerifyController.value = TextEditingValue(
-                      text: trimmed,
-                      selection: TextSelection.collapsed(offset: trimmed.length),
-                    );
-                  }
-                },
               ),
               const SizedBox(height: 15),
               TextField(
@@ -203,15 +177,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                 ),
                 onChanged: (value) {
-                  final trimmed = value.trim();
-                  if (_passwordRegisterController.text != trimmed) {
-                    _passwordRegisterController.value = TextEditingValue(
-                      text: trimmed,
-                      selection: TextSelection.collapsed(offset: trimmed.length),
-                    );
-                  }
-
-                  if (!_validatePassword(trimmed)) {
+                  if (!_validatePassword(value)) {
                     setState(() => _passwordError =
                         'Debe tener al menos 8 caracteres,\nuna mayúscula, una minúscula, un número y un símbolo.');
                   } else {
@@ -236,15 +202,6 @@ class _RegisterPageState extends State<RegisterPage> {
                     },
                   ),
                 ),
-                onChanged: (value) {
-                  final trimmed = value.trim();
-                  if (_passwordVerifyController.text != trimmed) {
-                    _passwordVerifyController.value = TextEditingValue(
-                      text: trimmed,
-                      selection: TextSelection.collapsed(offset: trimmed.length),
-                    );
-                  }
-                },
               ),
               const SizedBox(height: 15),
               ElevatedButton(
