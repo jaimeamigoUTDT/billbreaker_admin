@@ -1,20 +1,58 @@
-import 'package:billbreaker_admin/app/authentication/auth_service.dart';
-import 'package:billbreaker_admin/app/pages/register/register_controller.dart';
-import 'package:get/get_state_manager/src/simple/get_view.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:billbreaker_admin/app/authentication/auth_service.dart';
 
-class RegisterPage extends GetView<RegisterController> {
-  RegisterPage({super.key});
+class RegisterPage extends StatefulWidget {
+  const RegisterPage({super.key});
 
+  @override
+  State<RegisterPage> createState() => _RegisterPageState();
+}
+
+class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _emailRegisterController = TextEditingController();
   final TextEditingController _passwordRegisterController = TextEditingController();
   final TextEditingController _emailVerifyController = TextEditingController();
   final TextEditingController _passwordVerifyController = TextEditingController();
   final TextEditingController _userNameController = TextEditingController();
 
+  String? _usernameError;
+  String? _passwordError;
+
+  bool _obscurePassword = true;
+  bool _obscureVerifyPassword = true;
+
+  bool _validatePassword(String password) {
+    final hasUppercase = password.contains(RegExp(r'[A-Z]'));
+    final hasLowercase = password.contains(RegExp(r'[a-z]'));
+    final hasDigit = password.contains(RegExp(r'\d'));
+    final hasSpecialChar = password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>_\-=\[\];\/~`+]'));
+    final hasMinLength = password.length >= 8;
+
+    return hasUppercase && hasLowercase && hasDigit && hasSpecialChar && hasMinLength;
+  }
+
+  void _trimControllers() {
+    _userNameController.text = _userNameController.text.trim();
+    _emailRegisterController.text = _emailRegisterController.text.trim();
+    _emailVerifyController.text = _emailVerifyController.text.trim();
+    _passwordRegisterController.text = _passwordRegisterController.text.trim();
+    _passwordVerifyController.text = _passwordVerifyController.text.trim();
+  }
+
   void _register(BuildContext context) async {
-    // Check if emails match
+    _trimControllers(); // 🔥 Limpiar todos los campos
+
+    setState(() {
+      _usernameError = null;
+      _passwordError = null;
+    });
+
+    if (_userNameController.text.contains('_')) {
+      setState(() => _usernameError = 'No se permiten guiones bajos en el nombre de usuario.');
+      return;
+    }
+
     if (_emailRegisterController.text != _emailVerifyController.text) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -22,10 +60,9 @@ class RegisterPage extends GetView<RegisterController> {
           backgroundColor: Colors.red,
         ),
       );
-      return; // Exit the method if emails don't match
+      return;
     }
 
-    // Check if passwords match
     if (_passwordRegisterController.text != _passwordVerifyController.text) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -33,10 +70,15 @@ class RegisterPage extends GetView<RegisterController> {
           backgroundColor: Colors.red,
         ),
       );
-      return; // Exit the method if passwords don't match
+      return;
     }
 
-    // Proceed with registration if validation passes
+    if (!_validatePassword(_passwordRegisterController.text)) {
+      setState(() => _passwordError =
+          'La contraseña debe tener al menos 8 caracteres,\nuna mayúscula, una minúscula, un número y un símbolo.');
+      return;
+    }
+
     await AuthService().register(
       _userNameController.text,
       _emailRegisterController.text,
@@ -56,7 +98,7 @@ class RegisterPage extends GetView<RegisterController> {
       appBar: AppBar(),
       body: Center(
         child: Container(
-          width: 300, // Ancho del contenedor
+          width: 300,
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             color: Colors.white,
@@ -79,17 +121,33 @@ class RegisterPage extends GetView<RegisterController> {
                 style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 20),
-              // Campo de usuario
               TextField(
                 controller: _userNameController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Nombre de usuario',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.person), // Changed to a more appropriate icon
+                  border: const OutlineInputBorder(),
+                  prefixIcon: const Icon(Icons.person),
+                  errorText: _usernameError,
+                  errorMaxLines: 2,
                 ),
+                onChanged: (value) {
+                  final trimmed = value.trim();
+                  if (_userNameController.text != trimmed) {
+                    _userNameController.value = TextEditingValue(
+                      text: trimmed,
+                      selection: TextSelection.collapsed(offset: trimmed.length),
+                    );
+                  }
+
+                  if (trimmed.contains('_')) {
+                    setState(() => _usernameError =
+                        'No se permiten guiones bajos en el nombre de usuario.');
+                  } else {
+                    setState(() => _usernameError = null);
+                  }
+                },
               ),
               const SizedBox(height: 20),
-              // Campo de correo
               TextField(
                 controller: _emailRegisterController,
                 decoration: const InputDecoration(
@@ -97,9 +155,17 @@ class RegisterPage extends GetView<RegisterController> {
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.email),
                 ),
+                onChanged: (value) {
+                  final trimmed = value.trim();
+                  if (_emailRegisterController.text != trimmed) {
+                    _emailRegisterController.value = TextEditingValue(
+                      text: trimmed,
+                      selection: TextSelection.collapsed(offset: trimmed.length),
+                    );
+                  }
+                },
               ),
               const SizedBox(height: 15),
-              // Campo de verificar correo
               TextField(
                 controller: _emailVerifyController,
                 decoration: const InputDecoration(
@@ -107,31 +173,80 @@ class RegisterPage extends GetView<RegisterController> {
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.email),
                 ),
+                onChanged: (value) {
+                  final trimmed = value.trim();
+                  if (_emailVerifyController.text != trimmed) {
+                    _emailVerifyController.value = TextEditingValue(
+                      text: trimmed,
+                      selection: TextSelection.collapsed(offset: trimmed.length),
+                    );
+                  }
+                },
               ),
               const SizedBox(height: 15),
-              // Campo de contraseña
               TextField(
                 controller: _passwordRegisterController,
-                obscureText: true,
-                decoration: const InputDecoration(
+                obscureText: _obscurePassword,
+                decoration: InputDecoration(
                   labelText: 'Contraseña',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.lock),
+                  border: const OutlineInputBorder(),
+                  prefixIcon: const Icon(Icons.lock),
+                  errorText: _passwordError,
+                  errorMaxLines: 3,
+                  suffixIcon: IconButton(
+                    icon: Icon(_obscurePassword ? Icons.visibility : Icons.visibility_off),
+                    onPressed: () {
+                      setState(() {
+                        _obscurePassword = !_obscurePassword;
+                      });
+                    },
+                  ),
                 ),
+                onChanged: (value) {
+                  final trimmed = value.trim();
+                  if (_passwordRegisterController.text != trimmed) {
+                    _passwordRegisterController.value = TextEditingValue(
+                      text: trimmed,
+                      selection: TextSelection.collapsed(offset: trimmed.length),
+                    );
+                  }
+
+                  if (!_validatePassword(trimmed)) {
+                    setState(() => _passwordError =
+                        'Debe tener al menos 8 caracteres,\nuna mayúscula, una minúscula, un número y un símbolo.');
+                  } else {
+                    setState(() => _passwordError = null);
+                  }
+                },
               ),
               const SizedBox(height: 15),
-              // Campo de verificar contraseña
               TextField(
                 controller: _passwordVerifyController,
-                obscureText: true,
-                decoration: const InputDecoration(
+                obscureText: _obscureVerifyPassword,
+                decoration: InputDecoration(
                   labelText: 'Verificar contraseña',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.lock),
+                  border: const OutlineInputBorder(),
+                  prefixIcon: const Icon(Icons.lock),
+                  suffixIcon: IconButton(
+                    icon: Icon(_obscureVerifyPassword ? Icons.visibility : Icons.visibility_off),
+                    onPressed: () {
+                      setState(() {
+                        _obscureVerifyPassword = !_obscureVerifyPassword;
+                      });
+                    },
+                  ),
                 ),
+                onChanged: (value) {
+                  final trimmed = value.trim();
+                  if (_passwordVerifyController.text != trimmed) {
+                    _passwordVerifyController.value = TextEditingValue(
+                      text: trimmed,
+                      selection: TextSelection.collapsed(offset: trimmed.length),
+                    );
+                  }
+                },
               ),
               const SizedBox(height: 15),
-              // Botón de Registro
               ElevatedButton(
                 onPressed: () => _register(context),
                 style: ElevatedButton.styleFrom(
