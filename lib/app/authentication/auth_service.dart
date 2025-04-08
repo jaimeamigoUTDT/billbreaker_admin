@@ -54,42 +54,29 @@ class AuthService {
     }
   }
 
-  Future<bool> register(String username, String email, String emailVerification, String password, String passwordVerification) async {
-    final Uri authenticationUrl =
-        Uri.parse('https://api.billbreaker.com.ar/auth/register');
+  Future<http.Response> register(String username, String email, String emailVerification, String password, String passwordVerification) async {
+  final Uri authenticationUrl = Uri.parse('https://api.billbreaker.com.ar/auth/register');
 
-    // Create the request body with email and password
-    final Map<String, String> body = {
-      'username': username,
-      'email': email,
-      'password': password,
-    };
+  final Map<String, String> body = {
+    'username': username,
+    'email': email,
+    'password': password,
+  };
 
-    try {
-      // Send a POST request with JSON body
-      final http.Response response = await http.post(
-        authenticationUrl,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(body),
-      );
+  try {
+    final http.Response response = await http.post(
+      authenticationUrl,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(body),
+    );
 
-      // Check if the request was successful
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> queryContent = jsonDecode(response.body);
-
-        if (queryContent['status'] == 'OK') {
-          
-          return true;
-
-        } else {
-          return false;
-        }
-      }
-    } catch (e) {
-      return false;
-    }
-    return false;
+    return response;
+  } catch (e) {
+    print('Error interno en AuthService: $e');
+    rethrow; // vuelve a lanzar el error sin encapsularlo de nuevo
   }
+}
+
 
   void logout() async {
     app.isAuthenticated = false;

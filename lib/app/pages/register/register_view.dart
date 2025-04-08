@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:billbreaker_admin/app/authentication/auth_service.dart';
+import 'dart:convert';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -48,8 +49,8 @@ class _RegisterPageState extends State<RegisterPage> {
       _passwordError = null;
     });
 
-    if (_userNameController.text.contains('_')) {
-      setState(() => _usernameError = 'No se permiten guiones bajos en el nombre de usuario.');
+    if (_userNameController.text.contains('-')) {
+      setState(() => _usernameError = 'No se permiten guiones en el nombre de usuario.');
       return;
     }
 
@@ -79,13 +80,34 @@ class _RegisterPageState extends State<RegisterPage> {
       return;
     }
 
-    await AuthService().register(
-      _userNameController.text,
-      _emailRegisterController.text,
-      _emailVerifyController.text,
-      _passwordRegisterController.text,
-      _passwordVerifyController.text,
+try {
+  final response = await AuthService().register(
+    _userNameController.text,
+    _emailRegisterController.text,
+    _emailVerifyController.text,
+    _passwordRegisterController.text,
+    _passwordVerifyController.text,
+  );
+
+  final responseBody = jsonDecode(response.body);
+  if (response.statusCode == 200 && responseBody['status'] == 'OK') {
+    if (context.mounted) {
+      GoRouter.of(context).go('/login');
+    }
+  } else {
+    print(response.body);
+    final errorMessage = responseBody['message'] ?? 'Error desconocido';
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Error: $errorMessage')),
     );
+  }
+} catch (e) {
+  print('Error en AuthService.register: $e');
+
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(content: Text('Error: ${e.toString()}')),
+  );
+}
 
     if (context.mounted) {
       GoRouter.of(context).go('/login');
