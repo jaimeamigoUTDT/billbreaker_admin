@@ -58,10 +58,7 @@ class LoginPage extends GetView<LoginController> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
-
-    const double aspectRatio = 539 / 717;
+    const double aspectRatio = 539 / 650;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF3F3F3),
@@ -75,8 +72,11 @@ class LoginPage extends GetView<LoginController> {
             width = height * aspectRatio;
           }
 
-          final fieldWidth = width * (398 / 539);
-          final fieldHeight = fieldWidth / (398 / 54);
+          final double scaleFactor = width / 539.0;
+          double scaled(double value) => value * scaleFactor;
+
+          final fieldWidth = scaled(398);
+          final fieldHeight = scaled(54);
 
           return Center(
             child: Container(
@@ -84,23 +84,26 @@ class LoginPage extends GetView<LoginController> {
               height: height,
               decoration: BoxDecoration(
                 color: Colors.grey[200],
-                borderRadius: BorderRadius.circular(30),
-                border: Border.all(color: const Color(0xFFD9D9D9), width: 1),
+                borderRadius: BorderRadius.circular(scaled(30)),
+                border: Border.all(color: const Color(0xFFD9D9D9), width: scaled(1)),
               ),
               child: Column(
                 children: [
                   Expanded(
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 70, vertical: 50),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: scaled(70),
+                        vertical: scaled(50),
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(30),
-                        border: Border.all(color: const Color(0xFFD9D9D9), width: 1),
-                        boxShadow: const [
+                        borderRadius: BorderRadius.circular(scaled(30)),
+                        border: Border.all(color: const Color(0xFFD9D9D9), width: scaled(1)),
+                        boxShadow: [
                           BoxShadow(
                             color: Colors.black12,
-                            blurRadius: 8,
-                            offset: Offset(0, 4),
+                            blurRadius: scaled(8),
+                            offset: Offset(0, scaled(4)),
                           ),
                         ],
                       ),
@@ -108,37 +111,40 @@ class LoginPage extends GetView<LoginController> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            SvgPicture.asset('assets/logobb.svg', height: 59),
-                            const SizedBox(height: 21),
+                            SvgPicture.asset('assets/logobb.svg', height: scaled(59)),
+                            SizedBox(height: scaled(21)),
 
                             Text(
                               'Bienvenido',
                               textAlign: TextAlign.center,
                               style: GoogleFonts.poppins(
-                                fontSize: 36,
+                                fontSize: scaled(36),
                                 fontWeight: FontWeight.w600,
                                 color: Colors.black,
                               ),
                             ),
-                            
+
                             Text(
                               'Iniciá sesión o crea una cuenta',
                               textAlign: TextAlign.center,
                               style: GoogleFonts.manrope(
-                                fontSize: 14,
+                                fontSize: scaled(14),
                                 color: Colors.black54,
                               ),
                             ),
 
-                            const SizedBox(height: 40),
+                            SizedBox(height: scaled(40)),
                             Align(
                               alignment: Alignment.centerLeft,
                               child: Text(
                                 'Email',
-                                style: GoogleFonts.manrope(fontSize: 16, color: Colors.grey[700]),
+                                style: GoogleFonts.manrope(
+                                  fontSize: scaled(16),
+                                  color: Colors.grey[700],
+                                ),
                               ),
                             ),
-                            const SizedBox(height: 11),
+                            SizedBox(height: scaled(11)),
                             Center(
                               child: SizedBox(
                                 width: fieldWidth,
@@ -147,26 +153,39 @@ class LoginPage extends GetView<LoginController> {
                                   controller: _emailController,
                                   decoration: InputDecoration(
                                     hintText: 'Ingresá tu mail...',
-                                    hintStyle: GoogleFonts.manrope(),
+                                    hintStyle: GoogleFonts.manrope(fontSize: scaled(14)),
                                     border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(8),
+                                      borderRadius: BorderRadius.circular(scaled(8)),
                                     ),
                                     filled: true,
                                     fillColor: Colors.grey[100],
                                     isDense: true,
-                                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8), // o el radio que estés usando
+                                      borderSide: BorderSide(
+                                        color: Color(0xFFFE724C),
+                                        width: 2, // el ancho del borde cuando está enfocado
+                                      ),
+                                    ),
+                                      contentPadding: EdgeInsets.symmetric(
+                                      horizontal: scaled(12),
+                                      vertical: scaled(16),
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
 
-                            const SizedBox(height: 40),
+                            SizedBox(height: scaled(40)),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
                                   'Contraseña',
-                                  style: GoogleFonts.manrope(fontSize: 16, color: Colors.grey[700]),
+                                  style: GoogleFonts.manrope(
+                                    fontSize: scaled(16),
+                                    color: Colors.grey[700],
+                                  ),
                                 ),
                                 TextButton(
                                   onPressed: () {},
@@ -176,12 +195,15 @@ class LoginPage extends GetView<LoginController> {
                                   ),
                                   child: Text(
                                     'Recuperar contraseña',
-                                    style: GoogleFonts.manrope(fontSize: 12, color: Colors.red),
+                                    style: GoogleFonts.manrope(
+                                      fontSize: scaled(12),
+                                      color: Colors.red,
+                                    ),
                                   ),
                                 ),
                               ],
                             ),
-                              const SizedBox(height: 11),
+                            SizedBox(height: scaled(11)),
                             Center(
                               child: SizedBox(
                                 width: fieldWidth,
@@ -191,20 +213,30 @@ class LoginPage extends GetView<LoginController> {
                                   obscureText: true,
                                   decoration: InputDecoration(
                                     hintText: 'Ingresá tu contraseña...',
-                                    hintStyle: GoogleFonts.manrope(),
+                                    hintStyle: GoogleFonts.manrope(fontSize: scaled(14)),
                                     border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(8),
+                                      borderRadius: BorderRadius.circular(scaled(8)),
                                     ),
                                     filled: true,
                                     fillColor: Colors.grey[100],
                                     isDense: true,
-                                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8), // o el radio que estés usando
+                                      borderSide: BorderSide(
+                                        color: Color(0xFFFE724C),
+                                        width: 2, // el ancho del borde cuando está enfocado
+                                      ),
+                                    ),
+                                    contentPadding: EdgeInsets.symmetric(
+                                      horizontal: scaled(12),
+                                      vertical: scaled(16),
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
 
-                            const SizedBox(height: 22),
+                            SizedBox(height: scaled(22)),
                             Center(
                               child: SizedBox(
                                 width: fieldWidth,
@@ -214,14 +246,14 @@ class LoginPage extends GetView<LoginController> {
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: const Color(0xFFFF6F4F),
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
+                                      borderRadius: BorderRadius.circular(scaled(8)),
                                     ),
                                   ),
                                   child: Text(
                                     'Sign in',
                                     style: GoogleFonts.manrope(
                                       color: Colors.white,
-                                      fontSize: 16,
+                                      fontSize: scaled(16),
                                     ),
                                   ),
                                 ),
@@ -233,20 +265,21 @@ class LoginPage extends GetView<LoginController> {
                     ),
                   ),
 
-                  // Footer
                   Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.symmetric(vertical: 18),
-                    decoration: const BoxDecoration(
-                      color: Color(0xFFEDEDED),
-                      borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
+                    padding: EdgeInsets.symmetric(vertical: scaled(18)),
+                    decoration: BoxDecoration(
+                      color: const Color.fromARGB(0, 237, 237, 237),
+                      borderRadius: BorderRadius.vertical(
+                        bottom: Radius.circular(scaled(30)),
+                      ),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
                           'No tenés cuenta? ',
-                          style: GoogleFonts.manrope(fontSize: 16),
+                          style: GoogleFonts.manrope(fontSize: scaled(16)),
                         ),
                         GestureDetector(
                           onTap: () => context.go('/register'),
@@ -254,7 +287,7 @@ class LoginPage extends GetView<LoginController> {
                             'Registrate',
                             style: GoogleFonts.manrope(
                               fontWeight: FontWeight.bold,
-                              fontSize: 16,
+                              fontSize: scaled(16),
                               decoration: TextDecoration.none,
                             ),
                           ),
