@@ -21,6 +21,8 @@ class _RegisterPageState extends State<RegisterPage> {
 
   String? _usernameError;
   String? _passwordError;
+  String? _emailError;
+  String? _verifyEmailError;
 
   bool _obscurePassword = true;
   bool _obscureVerifyPassword = true;
@@ -47,20 +49,20 @@ class _RegisterPageState extends State<RegisterPage> {
     setState(() {
       _usernameError = null;
       _passwordError = null;
+      _emailError = null;
+      _verifyEmailError = null;
     });
 
-    if (_userNameController.text.contains('-')) {
-      setState(() => _usernameError = 'No se permiten guiones en el nombre de usuario.');
+    if (_userNameController.text.contains('_') || _userNameController.text.contains('-')) {
+      setState(() => _usernameError = 'No se permiten guiones bajos ni guiones en el nombre de usuario.');
       return;
     }
 
     if (_emailRegisterController.text != _emailVerifyController.text) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Los correos electrónicos no coinciden'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      setState(() {
+        _emailError = 'Los correos no coinciden';
+        _verifyEmailError = 'Los correos no coinciden';
+      });
       return;
     }
 
@@ -76,7 +78,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
     if (!_validatePassword(_passwordRegisterController.text)) {
       setState(() => _passwordError =
-          'La contraseña debe tener al menos 8 caracteres,\nuna mayúscula, una minúscula, un número y un símbolo.');
+          'Debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un símbolo.');
       return;
     }
 
@@ -166,7 +168,6 @@ class _RegisterPageState extends State<RegisterPage> {
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                          //SizedBox(height: scaled(6)),
                           Center(
                             child: RichText(
                               text: TextSpan(
@@ -202,8 +203,8 @@ class _RegisterPageState extends State<RegisterPage> {
                             controller: _userNameController,
                             errorText: _usernameError,
                             onChanged: (value) {
-                              if (value.contains('_')) {
-                                setState(() => _usernameError = 'No se permiten guiones bajos en el nombre de usuario.');
+                              if (value.contains('_') || value.contains('-')) {
+                                setState(() => _usernameError = 'No se permiten guiones bajos ni guiones en el nombre de usuario.');
                               } else {
                                 setState(() => _usernameError = null);
                               }
@@ -217,6 +218,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             label: 'Email',
                             hint: 'Ingresá tu mail...',
                             controller: _emailRegisterController,
+                            errorText: _emailError,
                             width: fieldWidth,
                             height: fieldHeight,
                           ),
@@ -226,6 +228,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             label: 'Verificar email',
                             hint: 'Re-ingresá tu mail...',
                             controller: _emailVerifyController,
+                            errorText: _verifyEmailError,
                             width: fieldWidth,
                             height: fieldHeight,
                           ),
@@ -239,7 +242,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             errorText: _passwordError,
                             onChanged: (value) {
                               if (!_validatePassword(value)) {
-                                setState(() => _passwordError = 'Debe tener al menos 8 caracteres,una mayúscula, una minúscula, un número y un símbolo.');
+                                setState(() => _passwordError = 'Debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un símbolo.');
                               } else {
                                 setState(() => _passwordError = null);
                               }
@@ -355,15 +358,23 @@ class _RegisterPageState extends State<RegisterPage> {
                     fontWeight: FontWeight.w500,
                     color: const Color(0xFF666666),
                   ),
-                  errorText: errorText,
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(scaled(8))),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(scaled(10)),
+                    borderSide: BorderSide(color: errorText != null ? Colors.red : const Color(0xFF666666)),
+                  ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(scaled(10)),
-                    borderSide: BorderSide(color: const Color(0xFF666666), width: scaled(1)),
+                    borderSide: BorderSide(
+                      color: errorText != null ? Colors.red : const Color(0xFF666666),
+                      width: scaled(1),
+                    ),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(scaled(10)),
-                    borderSide: BorderSide(color: const Color(0xFFFE724C), width: scaled(2)),
+                    borderSide: BorderSide(
+                      color: errorText != null ? Colors.red : const Color(0xFFFE724C),
+                      width: scaled(2),
+                    ),
                   ),
                   filled: true,
                   fillColor: Colors.grey[100],
@@ -379,6 +390,17 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
               ),
             ),
+            if (errorText != null) ...[
+              SizedBox(height: scaled(6)),
+              Text(
+                errorText,
+                style: GoogleFonts.manrope(
+                  color: Colors.red,
+                  fontSize: scaled(14),
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
           ],
         ),
       ),
